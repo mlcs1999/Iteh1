@@ -1,3 +1,40 @@
+<?php
+    require "dbBroker.php";
+    require "model/user.php";
+
+    session_start();
+
+    if(isset($_POST['username']) && isset($_POST['password'])) {
+        $user = $_POST['username'];
+        $pass = $_POST['password'];
+
+        $korisnik = new User(1, $user, $pass);
+        // $odgovor = $korisnik->loginUser($user, $pass, $conn);
+        $odgovor = User::loginUser($korisnik, $conn);
+
+        if($odgovor->num_rows == 1) {
+            echo `
+                <script>
+                    console.log("Uspesno logovanje");
+                </script>            
+            `;
+            $_SESSION['user_id'] = $korisnik->id;
+            header("Location: home.php");
+            exit();
+        }
+        else {
+            echo `
+            <script>
+                console.log("Neuspesno logovanje");
+            </script>            
+        `;
+        echo "User ne postoji!";
+        }
+    }
+
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,7 +55,6 @@
                     <input type="password" name="password" class="form-control" required>
                     <button type="submit" class="btn btn-primary" name="submit">Prijavi se</button>
                 </div>
-
             </form>
         </div>
 
